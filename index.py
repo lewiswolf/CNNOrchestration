@@ -17,7 +17,7 @@ GENERATE_TARGETS = True
 
 # set command line flags
 @click.command()
-@click.option('--generate', is_flag = True, help='Generate targets')
+@click.option('--generate', is_flag = True, help='Generate targets before training.')
 def setOptions(generate):
 	GENERATE_TARGETS = generate
 setOptions()

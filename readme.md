@@ -1,3 +1,5 @@
+Dependencies: TinySol dataset
+
 To start:
 
 `$ pipenv run python index.py`

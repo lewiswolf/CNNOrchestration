@@ -13,7 +13,6 @@ def importMetadata(PATH_TO_DATASET):
 	except:
 		print('Metadata not found.')
 		sys.exit()
-	print(metadata)
 	return metadata
 
 def generateTargets(PATH_TO_DATASET, SAMPLES_PER_TARGET):

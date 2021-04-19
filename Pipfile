@@ -17,4 +17,4 @@ click = "*"
 python_version = "3.9"
 
 [scripts]
-start = "python index.py ..."
+start = "python index.py"

@@ -4,7 +4,7 @@ import soundfile as sf					# audio i/o
 import librosa							# audio tools
 
 # import global vars
-from index import PATH_TO_DATASET, NUM_OF_TARGETS, SAMPLES_PER_TARGET, SAMPLE_RATE
+from settings import PATH_TO_DATASET, SAMPLES_PER_TARGET, SAMPLE_RATE
 
 class Target:
 	def __init__(self):

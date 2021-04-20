@@ -3,9 +3,8 @@ import click							# cli
 import pandas as pd						# databases
 
 # import global vars
-from index import PATH_TO_DATASET, NUM_OF_TARGETS, SAMPLES_PER_TARGET, SAMPLE_RATE
+from settings import PATH_TO_DATASET, NUM_OF_TARGETS, SAMPLES_PER_TARGET, SAMPLE_RATE
 from target import Target
-
 
 def generateTargets():
 	print('Generating source seperation targets... 🎯')
@@ -17,7 +16,7 @@ def generateTargets():
 			engine='python'
 		)
 	except:
-		print('Metadata not found.')
+		print('TinySOL metadata not found.')
 		sys.exit()
 
 	# initialise targets metadata

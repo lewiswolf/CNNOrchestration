@@ -7,6 +7,12 @@ from settings import PATH_TO_DATASET, NUM_OF_TARGETS, SAMPLES_PER_TARGET, SAMPLE
 from target import Target
 
 def generateTargets():
+	'''
+	Generates targets for source seperation based on model settings.
+	Returns metadata for the targets, and saves the rendered wav 
+	files and the metadata.json in the /targets folder
+	'''
+
 	print('Generating source seperation targets... 🎯')
 
 	# get dataset metadata

@@ -7,6 +7,11 @@ import librosa							# audio tools
 from settings import PATH_TO_DATASET, SAMPLES_PER_TARGET, SAMPLE_RATE
 
 class Target:
+	'''
+	A class for combining instrumental samples into one big sample,
+	complete with metadata calibration.
+	'''
+
 	def __init__(self):
 		self.instruments = []
 		self.labels = []

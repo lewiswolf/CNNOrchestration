@@ -4,7 +4,7 @@ import click					# cli
 # add /src to sys.path
 sys.path.insert(1, os.path.join(os.getcwd(), 'src'))
 from generateTargets import generateTargets
-from settings import *
+from settings import NUM_OF_TARGETS, SAMPLES_PER_TARGET, SAMPLE_RATE
 
 # set command line flags
 @click.command()
@@ -22,7 +22,7 @@ def main(generate):
 		except:
 			targets = generateTargets()
 		# if the project settings and data settings don't align, regenerate
-		if (targets['SAMPLES_PER_TARGET'] != settings.SAMPLES_PER_TARGET or targets['NUM_OF_TARGETS'] != settings.NUM_OF_TARGETS or targets['SAMPLE_RATE'] != settings.SAMPLE_RATE):
+		if (targets['SAMPLES_PER_TARGET'] != SAMPLES_PER_TARGET or targets['NUM_OF_TARGETS'] != NUM_OF_TARGETS or targets['SAMPLE_RATE'] != SAMPLE_RATE):
 			targets = generateTargets()
 
 if __name__ == '__main__':

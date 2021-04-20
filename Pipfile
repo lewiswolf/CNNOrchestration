@@ -10,6 +10,8 @@ pandas = "*"
 matplotlib = "*"
 numpy = "*"
 click = "*"
+librosa = "*"
+soundfile = "*"
 
 [dev-packages]
 

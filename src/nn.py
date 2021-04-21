@@ -1,4 +1,4 @@
-import os
+import math, os
 import torch				# pytorch
 import torch.nn as nn		# neural
 import torchaudio			# handling audio
@@ -26,24 +26,27 @@ class TargetsDataset(torch.utils.data.Dataset):
 	def __len__(self):
 		return self.n_samples
 
-	# generate spectrograms from rendered targets
-	# and return a tensor of size (NUM_OF_TARGETS, 1, n_mels, (4 * 44100 / 2048)))
+	# generate mel spectrograms from rendered targets
 	def preprocess_x(self, filepaths):
-		tmp = []
-		for x in filepaths:
-			waveform = torchaudio.load(os.path.join(os.getcwd(), x))[0]
+		n_mels = 128
+		n_fft = 2048
+		hop_length = 512 # the paper says 2048, but then the output matrix is the wrong size 🤷‍♂️
+		X = torch.zeros(len(filepaths), 1, n_mels, math.ceil(4 * 44100 / hop_length))
+
+		for i, file in enumerate(filepaths):
+			waveform = torchaudio.load(os.path.join(os.getcwd(), file))[0]
 			spectrogram = torchaudio.transforms.MelSpectrogram(
 				sample_rate = SAMPLE_RATE,
-				n_mels = 128,
-				n_fft = 2048,
-				hop_length = 512 # the paper says 2048, but then the output matrix is the wrong size 🤷‍♂️
+				n_mels = n_mels,
+				n_fft = n_fft,
+				hop_length = hop_length
 			)(waveform)
-			tmp += spectrogram
-		X = torch.reshape(torch.stack(tmp), (-1, 1, 128, 345))
+			X[i] = spectrogram
+
 		X.requires_grad = True
 		return X
 
-	# converts np array to a list then to a tensor of size (NUM_OF_TARGETS, num_of_classes)
+	# converts np array of lists to a tensor
 	def preprocess_y(self, array_of_lists, num_of_classes):
 		Y = torch.zeros([len(array_of_lists), num_of_classes])
 		for i, list in enumerate(array_of_lists):

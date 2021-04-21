@@ -5,7 +5,7 @@ import click					# cli
 sys.path.insert(1, os.path.join(os.getcwd(), 'src'))
 from settings import NUM_OF_TARGETS, SAMPLES_PER_TARGET, SAMPLE_RATE
 from generateTargets import generate_targets
-from cnn import TargetsDataset, train_model
+from nn import TargetsDataset, train_model
 
 # set command line flags
 @click.command()
@@ -31,11 +31,11 @@ def main(generate):
 		):
 			targetsJSON = generate_targets()
 	# format to torch dataset class
-	dataset = TargetsDataset(targetsJSON['targets'])
+	dataset = TargetsDataset(targetsJSON['targets'], len(targetsJSON['all_labels']))
 	print('Dataset loaded! 🗄')
 
 	# train the model
-	train_model(dataset)
+	train_model(dataset, targetsJSON['all_labels'])
 
 	print('')
 

@@ -11,9 +11,11 @@ from cnn import TargetsDataset, train_model
 @click.command()
 @click.option('--generate', '-g', is_flag = True, help = 'Generate targets before training.')
 def main(generate):
+	print('')
+
 	# generate targets and store metadata
 	if (generate):
-		targets = generate_targets()
+		targetsJSON = generate_targets()
 	else:
 		try:
 			# load targets metadata
@@ -34,6 +36,8 @@ def main(generate):
 
 	# train the model
 	train_model(dataset)
+
+	print('')
 
 if __name__ == '__main__':
     main()

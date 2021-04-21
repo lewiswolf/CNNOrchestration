@@ -6,7 +6,7 @@ import pandas as pd						# databases
 from settings import PATH_TO_DATASET, NUM_OF_TARGETS, SAMPLES_PER_TARGET, SAMPLE_RATE
 from target import Target
 
-def generateTargets():
+def generate_targets():
 	'''
 	Generates targets for source seperation based on model settings.
 	Returns metadata for the targets, and saves the rendered wav 
@@ -26,7 +26,7 @@ def generateTargets():
 		sys.exit()
 
 	# initialise targets metadata
-	targetsMetadata = {
+	targetsJSON = {
 		"SAMPLES_PER_TARGET": SAMPLES_PER_TARGET,
 		"NUM_OF_TARGETS": NUM_OF_TARGETS,
 		"SAMPLE_RATE": SAMPLE_RATE,
@@ -55,11 +55,11 @@ def generateTargets():
 			target.combine_for_training(i)
 
 			# append metadata to output json and update progressbar
-			targetsMetadata['targets'] += [target.getMetadata()]
+			targetsJSON['targets'] += [target.getMetadata()]
 			bar.update(1)
 
 	# export metadata as json
 	with open(os.path.join(os.getcwd(), 'targets/metadata.json'), 'w') as json_file:
-		json.dump(targetsMetadata, json_file)
+		json.dump(targetsJSON, json_file)
 
-	return targetsMetadata
+	return targetsJSON

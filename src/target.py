@@ -46,9 +46,9 @@ class Target:
 			output[i] = tmpNP[i + trim]
 
 		# set metadata and export target
-		outputPath = os.path.join(os.getcwd(), f'targets/target_{index}.wav')
+		outputPath = f'targets/target_{index}.wav'
 		self.renderedFilepath = outputPath
-		sf.write(outputPath, output, SAMPLE_RATE)
+		sf.write(os.path.join(os.getcwd(), outputPath), output, SAMPLE_RATE)
 	
 	def getMetadata(self):
 		return {

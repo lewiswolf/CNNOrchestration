@@ -33,6 +33,19 @@ def generate_targets():
 		"targets": []
 	}
 
+	# clear folder
+	targetsFolder = os.path.join(os.getcwd(), 'targets')
+	for file in os.listdir(targetsFolder):
+		if (file != '.gitignore'):
+			os.remove(os.path.join(targetsFolder, file))
+
+	# create list of labels
+	labels = []
+	for i in range(len(datasetMetadata)):
+		tmp = [datasetMetadata['Instrument (abbr.)'][i], datasetMetadata['Pitch'][i]]
+		if (not tmp in labels):
+			labels += [tmp]
+
 	with click.progressbar(length = NUM_OF_TARGETS) as bar:
 		for i in range(NUM_OF_TARGETS):
 			target = Target()
@@ -45,11 +58,7 @@ def generate_targets():
 				# append metadata to class
 				target.instruments += [datasetMetadata['Instrument (abbr.)'][index]]
 				target.sampleFilepaths += [datasetMetadata['Path'][index]]
-				target.labels += [[
-					datasetMetadata['Instrument (in full)'][index], 
-					datasetMetadata['Pitch'][index], 
-					datasetMetadata['Dynamics'][index]
-				]]
+				target.labels += [labels.index([datasetMetadata['Instrument (abbr.)'][index], datasetMetadata['Pitch'][index]])]
 				
 			# combine samples
 			target.combine_for_training(i)

@@ -30,6 +30,7 @@ def generate_targets():
 		"SAMPLES_PER_TARGET": SAMPLES_PER_TARGET,
 		"NUM_OF_TARGETS": NUM_OF_TARGETS,
 		"SAMPLE_RATE": SAMPLE_RATE,
+		"all_labels": [],
 		"targets": []
 	}
 
@@ -45,6 +46,7 @@ def generate_targets():
 		tmp = [datasetMetadata['Instrument (abbr.)'][i], datasetMetadata['Pitch'][i]]
 		if (not tmp in labels):
 			labels += [tmp]
+	targetsJSON['all_labels'] = labels
 
 	with click.progressbar(length = NUM_OF_TARGETS) as bar:
 		for i in range(NUM_OF_TARGETS):

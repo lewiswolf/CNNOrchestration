@@ -26,7 +26,7 @@ def main(generate):
 		# this only happens if the import works
 		if (
 			targetsJSON['SAMPLES_PER_TARGET'] != SAMPLES_PER_TARGET or 
-			targetsJSON['NUM_OF_TARGETS'] != NUM_OF_TARGETS or 
+			targetsJSON['NUM_OF_TARGETS'] < NUM_OF_TARGETS or 
 			targetsJSON['SAMPLE_RATE'] != SAMPLE_RATE
 		):
 			targetsJSON = generate_targets()

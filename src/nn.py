@@ -76,7 +76,6 @@ class NeuralNet(nn.Module):
 		self.convLayers = nn.ModuleList([ConvLayer() for i in range(4)])
 		self.fc1 = nn.Linear(8 * 21, num_of_classes) # ammend inputs when lstm is involved
 		self.fc2 = nn.Linear(num_of_classes, num_of_classes)
-		self.a = nn.Sigmoid()
 
 	def forward(self, x):
 		y_hat = x
@@ -87,7 +86,6 @@ class NeuralNet(nn.Module):
 		y_hat = torch.reshape(y_hat, (-1, 8 * 21)) # ammend when lstm is involved
 		y_hat = self.fc1(y_hat)
 		y_hat = self.fc2(y_hat)
-		y_hat = self.a(y_hat)
 		return y_hat
 
 			
@@ -105,7 +103,7 @@ def train_model(dataset, classes):
 	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 	dataloader = torch.utils.data.DataLoader(dataset = dataset, batch_size = BATCH_SIZE)
 	model = NeuralNet(len(classes)).to(device)
-	criterion = nn.BCELoss()
+	criterion = nn.BCEWithLogitsLoss()
 	optimiser = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
 
 	for epoch in range(NUM_OF_EPOCHS):
@@ -125,3 +123,10 @@ def train_model(dataset, classes):
 
 		if (epoch % 5 == 0):
 			print(f'Epoch {epoch}/{NUM_OF_EPOCHS}: Loss = {loss.item():.4f}')
+
+	# with torch.no_grad():
+	# 	n_correct = 0
+	# 	for (features, labels) in enumerate(test_loader):
+	# 		features = features.to(device)
+	# 		labels = labels.to(device)
+	# 		outputs = model(features)

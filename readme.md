@@ -21,6 +21,6 @@ In the event that you wish to manually generate a dataset before training, run:
 
 `$ pipenv run retrain`
 
-All other model parameters can be configured in _src/settings.py_.
+All of the model hyperparameters can be configured in _src/settings.py_.
 
 When training is complete, the trained model is automatically saved in the _/models_ directory.

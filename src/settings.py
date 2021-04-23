@@ -10,9 +10,7 @@ LEARNING_RATE = 0.5
 BATCH_SIZE = 4
 NUM_OF_EPOCHS = 100
 
-PATH_TO_TRAINED_MODEL = ''
-
-def export_settings_to_json(export_path):
+def export_settings():
 	settings = {
 		'SAMPLES_PER_TARGET': SAMPLES_PER_TARGET,
 		'NUM_OF_TARGETS': NUM_OF_TARGETS,
@@ -21,6 +19,4 @@ def export_settings_to_json(export_path):
 		'BATCH_SIZE': BATCH_SIZE,
 		'NUM_OF_EPOCHS': NUM_OF_EPOCHS
 	}
-
-	with open(f'{export_path}.json', 'w') as json_file:
-		json.dump(settings, json_file)	
+	return settings

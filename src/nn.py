@@ -4,7 +4,7 @@ import torch.nn as nn		# neural
 import torchaudio			# handling audio
 import pandas as pd			# databases
 
-from settings import BATCH_SIZE, LEARNING_RATE, NUM_OF_EPOCHS, NUM_OF_TARGETS, SAMPLE_RATE
+from settings import BATCH_SIZE, LEARNING_RATE, NUM_OF_EPOCHS, SAMPLE_RATE
 
 class TargetsDataset(torch.utils.data.Dataset):
 	'''
@@ -14,7 +14,6 @@ class TargetsDataset(torch.utils.data.Dataset):
 	'''
 
 	def __init__(self, targets, num_of_classes):
-		print('Preprocessing dataset... 📝')
 		# transform json into np arrays and preprocess
 		self.X = self.preprocess_x(pd.DataFrame(targets)['filepath'].values)
 		self.Y = self.preprocess_y(pd.DataFrame(targets)['labels'].values, num_of_classes)
@@ -33,8 +32,8 @@ class TargetsDataset(torch.utils.data.Dataset):
 		hop_length = 512 # the paper says 2048, but then the output matrix is the wrong size 🤷‍♂️
 		X = torch.zeros(len(filepaths), 1, n_mels, math.ceil(4 * 44100 / hop_length))
 
-		for i in range(NUM_OF_TARGETS):
-			waveform = torchaudio.load(os.path.join(os.getcwd(), filepaths[i]))[0]
+		for i, file in enumerate(filepaths):
+			waveform = torchaudio.load(os.path.join(os.getcwd(), file))[0]
 			spectrogram = torchaudio.transforms.MelSpectrogram(
 				sample_rate = SAMPLE_RATE,
 				n_mels = n_mels,
@@ -49,8 +48,8 @@ class TargetsDataset(torch.utils.data.Dataset):
 	# converts np array of lists to a tensor
 	def preprocess_y(self, array_of_lists, num_of_classes):
 		Y = torch.zeros([len(array_of_lists), num_of_classes])
-		for i in range(NUM_OF_TARGETS):
-			for index in array_of_lists[i]:
+		for i, list in enumerate(array_of_lists):
+			for index in list:
 				Y[i][index] = 1
 		return Y
 
@@ -69,7 +68,7 @@ class ConvLayer(nn.Module):
 
 class NeuralNet(nn.Module):
 	'''
-	Three conv layers -> lstm -> conv layer -> 2 fc layers -> sigmoid
+	Three conv layers -> lstm -> conv layer -> 2 fc layers
 	'''
 	def __init__(self, num_of_classes):
 		super(NeuralNet, self).__init__()
@@ -87,11 +86,10 @@ class NeuralNet(nn.Module):
 		y_hat = self.fc1(y_hat)
 		y_hat = self.fc2(y_hat)
 		return y_hat
-
 			
-def train_model(dataset, classes):
+def train_model(train_dataset, test_dataset, classes):
 	'''
-	A CNN/LSTM for classifying source seperation.
+	A CNN/LSTM for performing source seperation.
 	params: 
 		dataset - generated from the class above 
 		classes - a list of class variables
@@ -99,15 +97,17 @@ def train_model(dataset, classes):
 
 	print('Training neural network... 🧠')
 
-	# configure network settings
+	# initialise network
 	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-	dataloader = torch.utils.data.DataLoader(dataset = dataset, batch_size = BATCH_SIZE)
+	train_loader = torch.utils.data.DataLoader(dataset = train_dataset, batch_size = BATCH_SIZE)
+	test_loader = torch.utils.data.DataLoader(dataset = test_dataset)
 	model = NeuralNet(len(classes)).to(device)
 	criterion = nn.BCEWithLogitsLoss()
 	optimiser = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
 
+	# training loop
 	for epoch in range(NUM_OF_EPOCHS):
-		for i, (features, labels) in enumerate(dataloader):
+		for i, (features, labels) in enumerate(train_loader):
 			# load data to the gpu / cpu
 			features = features.to(device)
 			labels = labels.to(device)
@@ -124,12 +124,13 @@ def train_model(dataset, classes):
 		if (epoch % 5 == 0):
 			print(f'Epoch {epoch}/{NUM_OF_EPOCHS}: Loss = {loss.item():.4f}')
 
+	print('Model trained! 🎛')
+	# test model
 	with torch.no_grad():
-		print('Model trained! 🎛')
-		# n_correct = 0
-		# for (features, labels) in enumerate(test_loader):
+		accuracy = 0
+		# for (features, labels) in test_loader:
 		# 	features = features.to(device)
 		# 	labels = labels.to(device)
 		# 	outputs = model(features)
 	
-	return model
+	return model, accuracy

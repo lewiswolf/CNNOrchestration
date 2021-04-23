@@ -46,6 +46,7 @@ def main(train, generate):
 		export_path = os.path.join(os.getcwd(), f'models/model_{datetime.now().strftime("%d%m%y_%H%M")}')
 		torch.save(final_model.state_dict(), f'{export_path}.pth')
 		export_settings_to_json(export_path)
+		print('Model saved! 📁')
 
 	print('')
 

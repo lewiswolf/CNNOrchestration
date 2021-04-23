@@ -60,41 +60,11 @@ class ConvLayer(nn.Module):
 	def __init__(self, input_size, output_size):
 		super(ConvLayer, self).__init__()
 		self.conv = nn.Conv2d(input_size, output_size, 3, stride = 1, padding = 1)
-		self.bn = nn.BatchNorm2d(input_size)
+		self.bn = nn.BatchNorm2d(output_size)
 		self.pool = nn.MaxPool2d(2, stride = 2)
 
 	def forward(self, x):
 		return self.pool(nn.functional.relu(self.bn(self.conv(x))))
-
-class LSTM(nn.Module):
-	'''
-	LSTM that produces an output from each layer
-	definition paramets:
-		input size,
-		hidden size,
-		number of layers
-	input tensor:
-		(sequence, batch number, features)
-	output tensor:
-		(batch number, lstm layer, sequence, features)
-	'''
-	def __init__(self, input_size, hidden_size, num_layers):
-		super(LSTM, self).__init__()
-		self.num_layers = num_layers
-		self.LSTMLayers = nn.ModuleList([nn.LSTM(input_size, hidden_size, 1) for i in range(num_layers)])
-		pass
-
-	def forward(self, X):
-		h = torch.randn(1, X.shape[1], X.shape[2])
-		c = torch.randn(1, X.shape[1], X.shape[2])
-		y_hat = []
-		for i in range(self.num_layers):
-			out, (h, c) = self.LSTMLayers[i](X, (h, c))
-			y_hat += torch.reshape(out, (-1, X.shape[0], X.shape[1], X.shape[2]))
-		y_hat = torch.stack(y_hat)
-		y_hat = torch.transpose(y_hat, 1, 2)
-		y_hat = torch.transpose(y_hat, 0, 1)
-		return y_hat, (h, c)
 
 class NeuralNet(nn.Module):
 	'''
@@ -102,8 +72,8 @@ class NeuralNet(nn.Module):
 	'''
 	def __init__(self, num_of_classes):
 		super(NeuralNet, self).__init__()
-		self.convLayers = nn.ModuleList([ConvLayer(1, 1) for i in range(3)])
-		self.lstm = LSTM(43, 43, 32)
+		self.convLayers = nn.ModuleList([ConvLayer(1, 8), ConvLayer(8, 16), ConvLayer(16, 32)])
+		self.lstm = nn.LSTM(16*43, 16*43, batch_first = True)
 		self.final_conv = ConvLayer(32, 32)
 		self.fc1 = nn.Linear(32 * 8 * 21, num_of_classes)
 		self.fc2 = nn.Linear(num_of_classes, num_of_classes)
@@ -112,8 +82,9 @@ class NeuralNet(nn.Module):
 		y_hat = x
 		for i in range(3):
 			y_hat = self.convLayers[i](y_hat)
-		y_hat = torch.transpose(torch.reshape(y_hat, (-1, 16, 43)), 0, 1)
+		y_hat = torch.flatten(y_hat, start_dim=2)
 		y_hat, _ = self.lstm(y_hat)
+		y_hat = torch.reshape(y_hat, (y_hat.shape[0], 32, 16, 43))
 		y_hat = self.final_conv(y_hat)
 		y_hat = torch.reshape(y_hat, (-1, 32 * 8 * 21))
 		y_hat = self.fc1(y_hat)
@@ -162,9 +133,10 @@ def train_model(train_dataset, test_dataset, classes):
 	# test model
 	with torch.no_grad():
 		accuracy = 0
-		for (features, labels) in test_loader:
-			features = features.to(device)
-			labels = labels.to(device)
-			outputs = model(features)
+		# for (features, labels) in test_loader:
+		# 	features = features.to(device)
+		# 	labels = labels.to(device)
+		# 	outputs = model(features)
+		# 	print(outputs.shape, outputs)
 	
 	return model, accuracy

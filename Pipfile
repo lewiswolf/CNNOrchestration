@@ -19,4 +19,5 @@ soundfile = "*"
 python_version = "3.9"
 
 [scripts]
-start = "python index.py"
+train = "python index.py --train"
+retrain = "python index.py --train --generate"

@@ -8,10 +8,19 @@ To install, navigate to the package directory:
 
 `$ pipenv install`
 
-To start:
+Generally, to train this model you will run:
 
-`$ pipenv run python index.py`
+`$ pipenv run train`
 
-For arguments, use:
+This first generates a dataset of targets from the samples contained in the TinySOL dataset. This will happen automatically when:
 
-`$ pipenv run python index.py --help`
+-   _src/settings.py_ does match the settings used to generate the target dataset.
+-   a dataset has not already been generated.
+
+In the event that you wish to manually generate a dataset before training, run:
+
+`$ pipenv run retrain`
+
+All other model parameters can be configured in _src/settings.py_.
+
+When training is complete, the trained model is automatically saved in the _/models_ directory.

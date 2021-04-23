@@ -124,9 +124,12 @@ def train_model(dataset, classes):
 		if (epoch % 5 == 0):
 			print(f'Epoch {epoch}/{NUM_OF_EPOCHS}: Loss = {loss.item():.4f}')
 
-	# with torch.no_grad():
-	# 	n_correct = 0
-	# 	for (features, labels) in enumerate(test_loader):
-	# 		features = features.to(device)
-	# 		labels = labels.to(device)
-	# 		outputs = model(features)
+	with torch.no_grad():
+		print('Model trained! 🎛')
+		# n_correct = 0
+		# for (features, labels) in enumerate(test_loader):
+		# 	features = features.to(device)
+		# 	labels = labels.to(device)
+		# 	outputs = model(features)
+	
+	return model

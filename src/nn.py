@@ -3,8 +3,9 @@ import torch				# pytorch
 import torch.nn as nn		# neural
 import torchaudio			# handling audio
 import pandas as pd			# databases
+import numpy as np			# maths
 
-from settings import BATCH_SIZE, LEARNING_RATE, NUM_OF_EPOCHS, SAMPLE_RATE
+from settings import BATCH_SIZE, LEARNING_RATE, NUM_OF_EPOCHS, SAMPLE_RATE, SAMPLES_PER_TARGET
 
 class TargetsDataset(torch.utils.data.Dataset):
 	'''
@@ -131,11 +132,19 @@ def train_model(train_dataset, test_dataset, classes):
 
 	# test model
 	with torch.no_grad():
-		accuracy = 0
-		# for (features, labels) in test_loader:
-		# 	features = features.to(device)
-		# 	labels = labels.to(device)
-		# 	outputs = model(features)
-		# 	print(outputs.shape, outputs)
-	
+		n_correct = 0
+		for (features, labels) in test_loader:
+			features = features.to(device)
+			labels = torch.flatten(labels)
+			# return output as a numpy array
+			y_predicted = model(features).numpy().flatten()
+			# find the most likely labels
+			idx_predicted = np.argsort(y_predicted)[0 - SAMPLES_PER_TARGET :]
+			# cross reference with labels
+			for i in idx_predicted:
+				if (labels[i].item() == 1.0):
+					n_correct += 1
+		accuracy = 100 * (n_correct / (10 * len(test_dataset)))
+		print(f'The trained model has an accuracy of {accuracy:.2f}%')
+
 	return model, accuracy

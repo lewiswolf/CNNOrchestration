@@ -10,9 +10,8 @@ class TargetsDataset(torch.utils.data.Dataset):
 	'''
 	The dataset
 		self.X is a tensor of mel spectrograms
-		self.Y is a tensor of class labels.
+		self.Y is a tensor of logits for each label
 	'''
-
 	def __init__(self, targets, num_of_classes):
 		# transform json into np arrays and preprocess
 		self.X = self.preprocess_x(pd.DataFrame(targets)['filepath'].values)
@@ -95,10 +94,10 @@ def train_model(train_dataset, test_dataset, classes):
 	'''
 	A CNN/LSTM for performing source seperation.
 	params: 
-		dataset - generated from the class above 
-		classes - a list of class variables
+		training dataset generate using TargetsDataset
+		testing dataset generate using TargetsDataset
+		classes - a list of class labels
 	'''
-
 	print('Training neural network... 🧠')
 
 	# initialise network

@@ -1,4 +1,4 @@
-import json, os
+import os
 
 # GLOBAL VARS
 PATH_TO_DATASET = os.path.join(os.getcwd(), 'TinySOL')

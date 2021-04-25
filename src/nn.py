@@ -125,26 +125,24 @@ def train_model(train_dataset, test_dataset, classes):
 			loss.backward()
 			optimiser.step()
 
-		if (epoch % 5 == 0):
-			print(f'Epoch {epoch}/{NUM_OF_EPOCHS}: Loss = {loss.item():.4f}')
+		if (epoch == 0 or epoch % 5 == 4):
+			# test model
+			with torch.no_grad():
+				n_correct = 0
+				for (features, labels) in test_loader:
+					features = features.to(device)
+					labels = torch.flatten(labels)
+					# return output as a numpy array
+					y_predicted = model(features).numpy().flatten()
+					# find the most likely labels
+					idx_predicted = np.argsort(y_predicted)[0 - SAMPLES_PER_TARGET :]
+					# cross reference with labels
+					for i in idx_predicted:
+						if (labels[i].item() == 1.0):
+							n_correct += 1
+				accuracy = 100 * (n_correct / (10 * len(test_dataset)))
+			print(f'Epoch {epoch + 1}/{NUM_OF_EPOCHS}: Loss = {loss.item():.4f}, Accuracy = {accuracy:.2f}%')
 
 	print('Model trained! 🎛')
-
-	# test model
-	with torch.no_grad():
-		n_correct = 0
-		for (features, labels) in test_loader:
-			features = features.to(device)
-			labels = torch.flatten(labels)
-			# return output as a numpy array
-			y_predicted = model(features).numpy().flatten()
-			# find the most likely labels
-			idx_predicted = np.argsort(y_predicted)[0 - SAMPLES_PER_TARGET :]
-			# cross reference with labels
-			for i in idx_predicted:
-				if (labels[i].item() == 1.0):
-					n_correct += 1
-		accuracy = 100 * (n_correct / (10 * len(test_dataset)))
-		print(f'The trained model has an accuracy of {accuracy:.2f}%')
 
 	return model, accuracy

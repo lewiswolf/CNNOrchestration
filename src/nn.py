@@ -86,7 +86,7 @@ class NeuralNet(nn.Module):
 		y_hat, _ = self.lstm(y_hat)
 		y_hat = torch.reshape(y_hat, (y_hat.shape[0], 32, 16, 43))
 		y_hat = self.final_conv(y_hat)
-		y_hat = torch.reshape(y_hat, (-1, 32 * 8 * 21))
+		y_hat = torch.flatten(y_hat, start_dim=1)
 		y_hat = self.fc1(y_hat)
 		y_hat = self.fc2(y_hat)
 		return y_hat

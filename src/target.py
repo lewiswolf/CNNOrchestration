@@ -41,6 +41,7 @@ class Target:
 
 		# reduce amplitude and trim output
 		tmpNP /= SAMPLES_PER_TARGET
+		tmpNP = tmpNP * (1.0 / np.max(tmpNP))
 		trim = (longest_sample - output.shape[0]) // 2
 		for i in range(output.shape[0]):
 			output[i] = tmpNP[i + trim]

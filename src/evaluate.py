@@ -63,7 +63,7 @@ def orchestrate_target(eval_model, settings, custom_target):
 			if (len(metadata_subset) > 0):
 				sample_path = metadata_subset['Path'][random.randint(0, len(metadata_subset) - 1)]
 
-			# combine samples
+			# import sample
 			waveform = sf.read(os.path.join(PATH_TO_DATASET, sample_path))[0]
 			tmp += [waveform]
 

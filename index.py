@@ -61,8 +61,8 @@ def main(train, generate, orchestrate):
 			json.dump(train_settings, json_file)
 		print('Model saved! 📁')
 
+	# orchestrate a user-defined sample
 	if (orchestrate):
-		# orchestrate a user-defined sample
 		try:
 			# use the model just trained
 			eval_model = final_model.eval()

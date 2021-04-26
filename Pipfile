@@ -21,3 +21,5 @@ python_version = "3.9"
 [scripts]
 train = "python index.py --train"
 retrain = "python index.py --train --generate"
+orchestrate = "python index.py --orchestrate"
+pipeline = "python index.py --train --orchestrate"

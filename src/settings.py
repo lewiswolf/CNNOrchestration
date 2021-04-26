@@ -3,12 +3,14 @@ import os
 # GLOBAL VARS
 PATH_TO_DATASET = os.path.join(os.getcwd(), 'TinySOL')
 SAMPLES_PER_TARGET = 10
-NUM_OF_TARGETS = 300
+NUM_OF_TARGETS = 10
 SAMPLE_RATE = 44100
 
 LEARNING_RATE = 0.5
 BATCH_SIZE = 4
-NUM_OF_EPOCHS = 100
+NUM_OF_EPOCHS = 50
+
+PATH_TO_MODEL = os.path.join(os.getcwd(), 'example/models/model_260421_1952') # don't include extension
 
 def export_settings():
 	settings = {

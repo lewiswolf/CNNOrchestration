@@ -9,12 +9,14 @@ from settings import NUM_OF_TARGETS, SAMPLES_PER_TARGET, SAMPLE_RATE
 from settings import export_settings
 from generateTargets import generate_targets
 from nn import TargetsDataset, train_model
+from evaluate import load_model, orchestrate_target
 
 # set command line flags
 @click.command()
-@click.option('--train', '-t', is_flag = True, help = 'Generate targets before training.')
+@click.option('--train', '-t', is_flag = True, help = 'Train a new model.')
 @click.option('--generate', '-g', is_flag = True, help = 'Generate targets before training.')
-def main(train, generate):
+@click.option('--orchestrate', '-o', is_flag = True, help = 'Orchestrate a target sound.')
+def main(train, generate, orchestrate):
 	print('')
 
 	if (train):
@@ -47,16 +49,31 @@ def main(train, generate):
 		print('Dataset loaded! 🗄')
 
 		# train the model
-		final_model, accuracy = train_model(train_dataset, test_dataset, targetsJSON['all_labels'])
+		final_model, accuracy = train_model(train_dataset, test_dataset, len(targetsJSON['all_labels']))
 
 		# save model and settings
 		export_path = os.path.join(os.getcwd(), f'models/model_{datetime.now().strftime("%d%m%y_%H%M")}')
 		torch.save(final_model.state_dict(), f'{export_path}.pth')
-		settings = export_settings()
-		settings['Final Accuracy'] = accuracy
+		train_settings = export_settings()
+		train_settings['Final Accuracy'] = accuracy
+		train_settings['all_labels'] = targetsJSON['all_labels']
 		with open(f'{export_path}.json', 'w') as json_file:
-			json.dump(settings, json_file)	
+			json.dump(train_settings, json_file)
 		print('Model saved! 📁')
+
+	if (orchestrate):
+		# orchestrate a user-defined sample
+		try:
+			# use the model just trained
+			eval_model = final_model.eval()
+			eval_settings = train_settings
+		except:
+			# or load an existing one
+			eval_model, eval_settings = load_model()
+		
+		# get filepath and evaluate
+		custom_target = click.prompt('What is the filepath to the target sound?', type=str)[1:-1]
+		orchestrate_target(eval_model, eval_settings, custom_target)
 
 	print('')
 
